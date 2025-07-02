@@ -6,9 +6,9 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: "https://nebula-frontend-one.vercel.app", // 🔥 No trailing slash
+  origin: "https://nebula-frontend-one.vercel.app",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
