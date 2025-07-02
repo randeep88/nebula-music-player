@@ -5,13 +5,12 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-app.use(cors());
-app.use(
-  cors({
-    origin: "https://nebula-frontend-one.vercel.app/",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors({
+  origin: "https://nebula-frontend-one.vercel.app", // 🔥 No trailing slash
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.get("/proxy-image", async (req, res) => {
   const imageUrl = req.query.url;
