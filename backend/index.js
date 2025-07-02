@@ -25,17 +25,17 @@ app.use(cors({
 }));
 
 
-app.get("/proxy-image", async (req, res) => {
-  const imageUrl = req.query.url;
-  try {
-    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
-    res.set("Content-Type", response.headers["content-type"]);
-    res.send(response.data);
-  } catch (error) {
-    console.error("Error fetching image:", error);
-    res.status(500).send("Error fetching image");
-  }
-});
+// app.get("/proxy-image", async (req, res) => {
+//   const imageUrl = req.query.url;
+//   try {
+//     const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+//     res.set("Content-Type", response.headers["content-type"]);
+//     res.send(response.data);
+//   } catch (error) {
+//     console.error("Error fetching image:", error);
+//     res.status(500).send("Error fetching image");
+//   }
+// });
 
 mongoose
   .connect(process.env.MONGO_URI)

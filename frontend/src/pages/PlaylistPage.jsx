@@ -5,10 +5,10 @@ import { Skeleton, Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MdPlayCircle } from "react-icons/md";
 import { MdPauseCircle } from "react-icons/md";
+import { IoPlaySharp } from "react-icons/io5";
+import { IoPauseSharp } from "react-icons/io5";
 import {
   faArrowLeft,
-  faCirclePause,
-  faCirclePlay,
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
@@ -40,7 +40,6 @@ const PlaylistPage = () => {
 
   const { data: playlistDetails, isPending } = usePlaylistData(playlistId);
 
-  // Extract dominant color from image
   useEffect(() => {
     if (!playlistDetails?.image?.[2]?.url || !imgRef.current) return;
 
@@ -66,7 +65,6 @@ const PlaylistPage = () => {
     }
   }, [playlistDetails?.image]);
 
-  // Handle song selection
   const handleSongClick = useCallback(
     (song) => {
       if (!song?.id) return;
@@ -99,7 +97,7 @@ const PlaylistPage = () => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token found");
     const res = await axios.post(
-      "http://localhost:3000/library/playlist/add",
+      "https://nebula-music-player-3.onrender.com/library/playlist/add",
       { playlistId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -111,7 +109,7 @@ const PlaylistPage = () => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token found");
     const res = await axios.delete(
-      "http://localhost:3000/library/playlist/remove",
+      "https://nebula-music-player-3.onrender.com/library/playlist/remove",
       {
         data: { playlistId },
         headers: { Authorization: `Bearer ${token}` },
@@ -454,15 +452,20 @@ const PlaylistPage = () => {
                   ) : (
                     <div>{index + 1}</div>
                   )}
-                  <FontAwesomeIcon
-                    icon={
-                      currentSong?.id === song?.id && isPlaying
-                        ? faPause
-                        : faPlay
-                    }
-                    className="text-white text-lg absolute group-hover:visible invisible"
-                    onClick={() => handleSongClick(song)}
-                  />
+                  {currentSong?.id === song?.id && isPlaying ? (
+                    <IoPauseSharp
+                      className="text-white text-xl absolute group-hover:visible invisible"
+                      onClick={() => setIsPlaying(false)}
+                    />
+                  ) : (
+                    <IoPlaySharp
+                      className="text-white text-xl absolute group-hover:visible invisible"
+                      onClick={() => {
+                        setCurrentSong(song);
+                        setIsPlaying(true);
+                      }}
+                    />
+                  )}
                 </div>
                 <div className="flex items-center gap-3 w-full">
                   <div>

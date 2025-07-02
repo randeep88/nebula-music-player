@@ -88,7 +88,7 @@ const AlbumPage = () => {
   const addAlbum = async (albumId) => {
     if (!token) throw new Error("No token found");
     const res = await axios.post(
-      "http://localhost:3000/library/album/add",
+      "https://nebula-music-player-3.onrender.com/library/album/add",
       { albumId },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -103,7 +103,7 @@ const AlbumPage = () => {
   const removeAlbum = async (albumId) => {
     if (!token) throw new Error("No token found");
     const res = await axios.delete(
-      "http://localhost:3000/library/album/remove",
+      "https://nebula-music-player-3.onrender.com/library/album/remove",
       {
         data: { albumId },
         headers: { Authorization: `Bearer ${token}` },

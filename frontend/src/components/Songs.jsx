@@ -1,7 +1,5 @@
 import { usePlayerStore } from "../store/usePlayerStore";
 import { formatDuration } from "../utils/formatDuration";
-import { faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import gif from "../assets/gif3.gif";
 import { useSearchResults } from "../hooks/useSearchResults";
 import { IoPlaySharp } from "react-icons/io5";

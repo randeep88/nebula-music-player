@@ -19,7 +19,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 const udpateUser = async (data) => {
   const token = localStorage.getItem("token");
   const res = await axios.patch(
-    "http://localhost:3000/auth/user-update",
+    "https://nebula-music-player-3.onrender.com/auth/user-update",
     data,
     {
       headers: {

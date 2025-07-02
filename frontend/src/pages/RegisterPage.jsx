@@ -24,7 +24,7 @@ const RegisterPage = () => {
   const { mutate: createUserMutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const response = await axios.post(
-        "http://localhost:3000/auth/register",
+        "https://nebula-music-player-3.onrender.com/auth/register",
         data
       );
       const { token } = response.data;

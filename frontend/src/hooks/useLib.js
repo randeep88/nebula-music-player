@@ -13,9 +13,12 @@ const useLib = () => {
     queryKey: ["library"],
     queryFn: async () => {
       if (!token) throw new Error("No token found");
-      const res = await axios.get("http://localhost:3000/library", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://nebula-music-player-3.onrender.com/library",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = res.data;
       return data || [];
     },

@@ -16,9 +16,12 @@ export const useLibrary = () => {
     queryKey: ["libraryArtists"],
     queryFn: async () => {
       if (!token) throw new Error("No token found");
-      const res = await axios.get("http://localhost:3000/library/artist", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://nebula-music-player-3.onrender.com/library/artist",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const artistIds = res.data || [];
       const results = await Promise.allSettled(
         artistIds.map(async (artist) => {
@@ -47,9 +50,12 @@ export const useLibrary = () => {
     queryKey: ["libraryPlaylists"],
     queryFn: async () => {
       if (!token) throw new Error("No token found");
-      const res = await axios.get("http://localhost:3000/library/playlist", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://nebula-music-player-3.onrender.com/library/playlist",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const playlistIds = (res.data || []).map((p) => ({
         type: "playlist",
         ...p,
@@ -81,9 +87,12 @@ export const useLibrary = () => {
     queryKey: ["libraryAlbums"],
     queryFn: async () => {
       if (!token) throw new Error("No token found");
-      const res = await axios.get("http://localhost:3000/library/album", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://nebula-music-player-3.onrender.com/library/album",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const albumIds = (res.data || []).map((a) => ({ type: "album", ...a }));
       const results = await Promise.allSettled(
         albumIds.map(async (album) => {
