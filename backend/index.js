@@ -5,12 +5,25 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://nebula-frontend-one.vercel.app",
+  "http://localhost:5173"
+];
+
 app.use(cors({
-  origin: "https://nebula-frontend-one.vercel.app", 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman or server-to-server)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 
 app.get("/proxy-image", async (req, res) => {
   const imageUrl = req.query.url;
