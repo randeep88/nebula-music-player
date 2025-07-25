@@ -1,9 +1,15 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo5.png";
 import { useLogin } from "../hooks/useLogin";
 import "../App.css";
 import { Button } from "@mui/material";
+import { backendAPI } from "../utils/backendAPI";
+
+const sendOtp = async (email, purpose) => {
+  await backendAPI.post("/auth/send-otp", { email, purpose });
+  localStorage.setItem("emailForOTP", email);
+};
 
 const LoginPage = () => {
   const {
@@ -12,10 +18,13 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
+
   const { loginMutate, isPending } = useLogin();
 
   const onSubmit = (data) => {
-    loginMutate(data);
+    sendOtp(data.email, "login");
+    navigate("/otp");
   };
 
   return (
@@ -35,7 +44,7 @@ const LoginPage = () => {
             <input
               disabled={isPending}
               id="email"
-              type="email"
+              type="email" 
               name="email"
               placeholder="Email"
               {...register("email", { required: "Email is required" })}
@@ -45,7 +54,7 @@ const LoginPage = () => {
           {errors && (
             <span className="text-red-500">{errors?.email?.message}</span>
           )}
-          <div>
+          {/* <div>
             <label htmlFor="password" className="block text-sm font-bold mb-1">
               Password
             </label>
@@ -61,7 +70,7 @@ const LoginPage = () => {
           </div>
           {errors && (
             <span className="text-red-500">{errors?.password?.message}</span>
-          )}
+          )} */}
           <Button
             type="submit"
             loading={isPending}
@@ -71,12 +80,13 @@ const LoginPage = () => {
               <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
             }
             sx={{
+              fontFamily: "Mulish",
               fontSize: "16px",
               padding: "4px 10px",
               textTransform: "none",
               backgroundColor: "#00CDAC",
               color: "black",
-              fontWeight: "600",
+              fontWeight: "700",
               "&.MuiLoadingButton-root": {
                 backgroundColor: "#00CDAC",
               },
@@ -89,7 +99,7 @@ const LoginPage = () => {
               },
             }}
           >
-            Continue
+            Send OTP
           </Button>
         </form>
 

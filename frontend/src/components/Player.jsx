@@ -1,6 +1,6 @@
 import { usePlayerStore } from "../store/usePlayerStore";
 import Slider from "@mui/material/Slider";
-import { Volume1, Volume2, VolumeOff, Volume } from "lucide-react";
+import { Volume1, Volume2, VolumeOff, Volume, Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDuration } from "../utils/formatDuration";
 import { Repeat } from "lucide-react";
@@ -12,6 +12,7 @@ import { BiSkipNext } from "react-icons/bi";
 import { MdQueueMusic } from "react-icons/md";
 import { BiSkipPrevious } from "react-icons/bi";
 import useUser from "../hooks/useUser";
+import DownloadButton from "./SongDownloadButton";
 
 const Player = () => {
   const {
@@ -36,6 +37,8 @@ const Player = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const { isAuthenticated } = useUser();
+
+  console.log(currentSong?.downloadUrl?.[4]?.url);
 
   useEffect(() => {
     if (audioRef.current && currentSong?.downloadUrl?.[4]?.url) {
@@ -283,12 +286,26 @@ const Player = () => {
           </div>
         )}
 
+        {isAuthenticated && (
+          <div className="relative group flex items-center justify-center">
+            {currentSong?.downloadUrl[4]?.url && (
+              <DownloadButton
+                songURL={currentSong?.downloadUrl[4]?.url}
+                songName={currentSong?.name}
+              />
+            )}
+            <div className="absolute bottom-8 group-hover:visible delay-1000 text-xs invisible text-neutral-100 w-[6.5rem] text-center bg-neutral-700 font-semibold p-1 rounded">
+              Download song in 320kbps
+            </div>
+          </div>
+        )}
+
         <div className="w-32 flex items-center gap-2">
           {getVolumeIcon()}
           <Slider
             valueLabelDisplay="auto"
             size="small"
-            defaultValue={90}
+            defaultValue={60}
             onChange={(e, newValue) => {
               setVolume(e.target.value);
               if (audioRef.current) {

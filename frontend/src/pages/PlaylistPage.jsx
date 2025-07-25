@@ -35,7 +35,7 @@ const PlaylistPage = () => {
     setSongsQueue,
   } = usePlayerStore();
   const navigate = useNavigate();
-  const [gradientColor, setGradientColor] = useState("#1e3264");
+  const [gradientColor, setGradientColor] = useState("#070608");
   const imgRef = useRef(null);
 
   const { data: playlistDetails, isPending } = usePlaylistData(playlistId);
@@ -101,7 +101,6 @@ const PlaylistPage = () => {
       { playlistId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    console.log("Add playlist response:", res.data);
     return res.data;
   };
 
@@ -115,7 +114,6 @@ const PlaylistPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    console.log("Remove playlist response:", res.data);
     return res.data;
   };
 
@@ -145,9 +143,19 @@ const PlaylistPage = () => {
           ["libraryPlaylists"],
           context.previousPlaylists
         );
-        toast.error(
-          error.response?.data?.message || "Failed to add playlist to library"
-        );
+        toast.error("Failed to add playlist to library", {
+          style: {
+            background: "#7f1d1d99",
+            backdropFilter: "blur(5px)",
+            padding: "10px",
+            color: "#fff",
+            fontWeight: "600",
+          },
+          iconTheme: {
+            primary: "#FF0000",
+            secondary: "#FFFAEE",
+          },
+        });
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["libraryPlaylists"] });
@@ -155,14 +163,14 @@ const PlaylistPage = () => {
       onSuccess: (data) => {
         toast.success("Playlist added to your library", {
           style: {
-            border: "1px solid #00CDAC99",
-            background: "#333333",
+            background: "#14532d99",
+            backdropFilter: "blur(5px)",
             padding: "10px",
-            color: "#00CDAC",
+            color: "#fff",
             fontWeight: "600",
           },
           iconTheme: {
-            primary: "#00CDAC",
+            primary: "#22c55e",
             secondary: "#FFFAEE",
           },
         });
@@ -187,9 +195,19 @@ const PlaylistPage = () => {
           ["libraryPlaylists"],
           context.previousPlaylists
         );
-        toast.error(
-          error.response?.data?.message || "Failed to remove playlist"
-        );
+        toast.error("Failed to remove playlist from library", {
+          style: {
+            background: "#7f1d1d99",
+            backdropFilter: "blur(5px)",
+            padding: "10px",
+            color: "#fff",
+            fontWeight: "600",
+          },
+          iconTheme: {
+            primary: "#FF0000",
+            secondary: "#FFFAEE",
+          },
+        });
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["libraryPlaylists"] });
@@ -197,14 +215,14 @@ const PlaylistPage = () => {
       onSuccess: (data) => {
         toast.success("Playlist removed from your library", {
           style: {
-            border: "1px solid #00CDAC99",
-            background: "#333333",
+            background: "#14532d99",
+            backdropFilter: "blur(5px)",
             padding: "10px",
-            color: "#00CDAC",
+            color: "#fff",
             fontWeight: "600",
           },
           iconTheme: {
-            primary: "#00CDAC",
+            primary: "#22c55e",
             secondary: "#FFFAEE",
           },
         });
@@ -357,7 +375,19 @@ const PlaylistPage = () => {
                 className="text-6xl text-[#00CDAC] cursor-pointer transition-all active:scale-95"
                 onClick={() => {
                   if (playlistDetails.songs.length === 0)
-                    return toast.error("Playlist is empty");
+                    return toast.error("No songs available in this playlist", {
+                      style: {
+                        background: "#7f1d1d99",
+                        backdropFilter: "blur(5px)",
+                        padding: "10px",
+                        color: "#fff",
+                        fontWeight: "600",
+                      },
+                      iconTheme: {
+                        primary: "#FF0000",
+                        secondary: "#FFFAEE",
+                      },
+                    });
                   setSongsQueue(playlistDetails.songs);
                   setCurrentSong(playlistDetails.songs[0]);
                   setIsPlaying(true);
@@ -510,7 +540,7 @@ const PlaylistPage = () => {
             ))}
           </div>
         ) : (
-          <div className="px-5 text-neutral-400 text-center font-semibold mt-10">
+          <div className="px-5 text-neutral-400 text-center font-semibold mt-7">
             No songs available in this playlist.
           </div>
         )}

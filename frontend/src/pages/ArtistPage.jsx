@@ -40,11 +40,10 @@ const ArtistPage = () => {
 
   const { data: artistDetails, isPending } = useArtistData(artistId);
   const { libraryItems } = useLibrary();
-  console.log(artistDetails);
 
   const [seeMoreSongs, setSeeMoreSongs] = useState(false);
 
-  const [gradientColor, setGradientColor] = useState("#1e3264");
+  const [gradientColor, setGradientColor] = useState("#070608");
   const imgRef = useRef(null);
 
   useEffect(() => {
@@ -84,7 +83,6 @@ const ArtistPage = () => {
       { artistId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    console.log("Add artist response:", res.data);
     return res.data;
   };
 
@@ -97,11 +95,8 @@ const ArtistPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    console.log("Remove artist response:", res.data);
     return res.data;
   };
-
-  console.log(gradientColor);
 
   const queryClient = useQueryClient();
 
@@ -118,9 +113,19 @@ const ArtistPage = () => {
     },
     onError: (error, artistId, context) => {
       queryClient.setQueryData(["libraryArtists"], context.previousArtists);
-      toast.error(
-        error.response?.data?.message || "Failed to add artist to library"
-      );
+      toast.error("Failed to add artist to library", {
+        style: {
+          background: "#7f1d1d99",
+          backdropFilter: "blur(5px)",
+          padding: "10px",
+          color: "#fff",
+          fontWeight: "600",
+        },
+        iconTheme: {
+          primary: "#FF0000",
+          secondary: "#FFFAEE",
+        },
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["libraryArtists"] });
@@ -128,14 +133,14 @@ const ArtistPage = () => {
     onSuccess: (data) => {
       toast.success("Artist added to your library", {
         style: {
-          border: "1px solid #00CDAC99",
-          background: "#333333",
+          background: "#14532d99",
+          backdropFilter: "blur(5px)",
           padding: "10px",
-          color: "#00CDAC",
+          color: "#fff",
           fontWeight: "600",
         },
         iconTheme: {
-          primary: "#00CDAC",
+          primary: "#22c55e",
           secondary: "#FFFAEE",
         },
       });
@@ -155,7 +160,19 @@ const ArtistPage = () => {
       },
       onError: (error, context) => {
         queryClient.setQueryData(["libraryArtists"], context.previousArtists);
-        toast.error(error.response?.data?.message || "Failed to remove artist");
+        toast.error("Failed to remove artist from library", {
+          style: {
+            background: "#7f1d1d99",
+            backdropFilter: "blur(5px)",
+            padding: "10px",
+            color: "#fff",
+            fontWeight: "600",
+          },
+          iconTheme: {
+            primary: "#FF0000",
+            secondary: "#FFFAEE",
+          },
+        });
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["libraryArtists"] });
@@ -163,14 +180,14 @@ const ArtistPage = () => {
       onSuccess: (data) => {
         toast.success("Artist removed from your library", {
           style: {
-            border: "1px solid #00CDAC99",
-            background: "#333333",
+            background: "#14532d99",
+            backdropFilter: "blur(5px)",
             padding: "10px",
-            color: "#00CDAC",
+            color: "#fff",
             fontWeight: "600",
           },
           iconTheme: {
-            primary: "#00CDAC",
+            primary: "#22c55e",
             secondary: "#FFFAEE",
           },
         });
@@ -360,7 +377,19 @@ const ArtistPage = () => {
                 className="text-6xl text-[#00CDAC] cursor-pointer transition-all active:scale-95"
                 onClick={() => {
                   if (artistDetails.topSongs.length === 0)
-                    return toast.error("Artist is empty");
+                    return toast.error("No songs available in this artist", {
+                      style: {
+                        background: "#7f1d1d99",
+                        backdropFilter: "blur(5px)",
+                        padding: "10px",
+                        color: "#fff",
+                        fontWeight: "600",
+                      },
+                      iconTheme: {
+                        primary: "#FF0000",
+                        secondary: "#FFFAEE",
+                      },
+                    });
                   setSongsQueue(artistDetails.topSongs);
                   setCurrentSong(artistDetails.topSongs[0]);
                   setIsPlaying(true);
@@ -522,12 +551,12 @@ const ArtistPage = () => {
                     </div>
                   ))}
                 </div>
-                <p
+                <span
                   onClick={() => setSeeMoreSongs(false)}
                   className="font-bold text-neutral-400 hover:text-white transition-all ps-10"
                 >
                   See less
-                </p>
+                </span>
               </div>
             ) : (
               <div>
@@ -588,12 +617,12 @@ const ArtistPage = () => {
                   ))}
                 </div>
                 {artistDetails.topSongs.length > 5 && (
-                  <p
+                  <span
                     onClick={() => setSeeMoreSongs(true)}
                     className="font-bold text-neutral-400 hover:text-white transition-all ps-10"
                   >
                     See more
-                  </p>
+                  </span>
                 )}
               </div>
             )}
@@ -626,12 +655,12 @@ const ArtistPage = () => {
             <h1 className="font-[800] text-neutral-100 text-2xl mb-3 px-3">
               Top Albums
             </h1>
-            <p
+            <span
               onClick={() => navigate("top-albums")}
               className="font-bold text-neutral-400 hover:text-white hover:underline transition-all"
             >
               Show all
-            </p>
+            </span>
           </div>
 
           <div className="grid grid-cols-6">
@@ -684,12 +713,12 @@ const ArtistPage = () => {
             <h1 className="font-[800] text-neutral-100 text-2xl mb-3 px-3">
               Singles
             </h1>
-            <p
+            <span
               onClick={() => navigate("singles")}
               className="font-bold text-neutral-400 hover:text-white hover:underline transition-all"
             >
               Show all
-            </p>
+            </span>
           </div>
 
           <div className="grid grid-cols-6">

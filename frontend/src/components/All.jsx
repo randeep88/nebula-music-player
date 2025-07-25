@@ -34,7 +34,7 @@ const All = () => {
   };
 
   return (
-    <div className="p-5 bg-neutral-800/60 backdrop-blur-lg">
+    <div className="p-5">
       <div className="flex items-start gap-3 mt-8">
         {/* top result */}
         <div className="w-[450px]">
@@ -58,7 +58,7 @@ const All = () => {
             />
           )}
           {songs && songs.length > 0 ? (
-            <div className="group relative bg-neutral-800/60 hover:bg-neutral-700/60 transition-all p-5 rounded-lg flex flex-col items-start gap-4">
+            <div className="group relative bg-neutral-800/40 hover:bg-neutral-700/60 transition-all p-5 rounded-lg flex flex-col items-start gap-4">
               <div>
                 <img
                   src={songs[0]?.image[2]?.url}
@@ -139,7 +139,7 @@ const All = () => {
                     <div className="flex items-center gap-3">
                       <div className="relative group flex items-center justify-center">
                         <img
-                          src={song.image[2].url}
+                          src={song?.image[2]?.url}
                           className="rounded w-10 overflow-hidden"
                         />
                         <div className="w-10 h-10 absolute bg-black rounded group-hover:bg-opacity-50 bg-opacity-0"></div>
@@ -156,10 +156,10 @@ const All = () => {
                         )}
                       </div>
                       <div>
-                        <h1 className="text-neutral-100 font-semibold truncate overflow-hidden">
+                        <h1 className="text-neutral-100 font-semibold truncate overflow-hidden line-clamp-1 w-96">
                           {song.name}
                         </h1>
-                        <p className="text-neutral-400 group-hover:text-neutral-100 text-sm font-semibold truncate overflow-hidden">
+                        <p className="text-neutral-400 group-hover:text-neutral-100 text-sm font-semibold truncate overflow-hidden line-clamp-1 w-96">
                           {song.artists.primary[0].name}
                         </p>
                       </div>

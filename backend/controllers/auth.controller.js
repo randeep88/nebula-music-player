@@ -2,61 +2,69 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/user.model.js");
+const EmailVerification = require("../models/EmailVerification.model.js");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "randeeprajpal9@gmail.com",
+    pass: "vyhu iwmi yhxk gecn",
+  },
+});
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body;
-  console.log(username, email, password);
   try {
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: "User already exists" });
-    if (user) console.log("User already exists");
+    const { username, email } = req.body;
+    console.log(username, email);
 
-    user = new User({ username, email, password, profilePic: req.file.path });
-    user.password = await bcrypt.hash(password, 10);
-    await user.save();
-
-    const payload = { userId: user._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+    const newUser = await User.create({
+      username,
+      email,
+      profilePic: req.file.path,
     });
-    res.json({ token });
+
+    console.log("newUser", newUser);
+
+    const payload = { userId: newUser._id };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "365d",
+    });
+    res.json({ token, user: newUser });
   } catch (err) {
-    res.status(500).json({ msg: "Server error" });
+    res
+      .status(500)
+      .json({ msg: "Getting error in user registeration", error: err.message });
   }
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  console.log(email, password);
-
   try {
+    const { email } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
-    console.log(user);
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
-    console.log(isMatch);
+    console.log("user", user);
+    if (!user.isVerified)
+      return res.status(400).json({ msg: "User not verified" });
 
     const payload = {
       userId: user._id,
       username: user.username,
       email: user.email,
-      password: user.password,
       profilePic: user.profilePic,
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "365d",
     });
-    res.json({ token });
+    res.json({ token, user });
   } catch (err) {
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ msg: "Server error", error: err.message });
   }
 };
 
 const me = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const userId = req.user.userId;
+    const user = await User.findById(userId);
     if (!user) return res.status(404).json({ msg: "User not found" });
     res.status(200).json(user);
   } catch (err) {
@@ -67,44 +75,76 @@ const me = async (req, res) => {
 const userUpdate = async (req, res) => {
   try {
     const userId = req.user.userId;
-    console.log("User ID:", userId);
 
-    const { username, email, currentPassword, newPassword } = req.body;
-    console.log("Request Body:", {
-      username,
-      email,
-      currentPassword,
-      newPassword,
-    });
-
+    const { username, email } = req.body;
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ msg: "User not found" });
-    console.log("Found User:", user);
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch)
-      return res.status(400).json({ msg: "Password does not match!" });
-    console.log("Password Match:", isMatch);
 
     user.username = username || user.username;
     user.email = email || user.email;
 
-    if (newPassword) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(newPassword, salt);
-    }
-
     if (req.file) {
-      console.log("Received File:", req.file);
       user.profilePic = req.file.path;
-    } else {
-      console.log("No new profile picture uploaded or file not received");
     }
 
     await user.save();
     res.status(200).json({ msg: "User updated successfully", user });
   } catch (err) {
-    console.error("Error in userUpdate:", err.message);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+};
+
+const sendOTP = async (req, res) => {
+  const { email } = req.body;
+
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+  await EmailVerification.findOneAndUpdate(
+    { email },
+    { otp, expiresAt },
+    { upsert: true }
+  );
+
+  try {
+    await transporter.sendMail({
+      from: "Nebula <randeeprajpal9@gmail.com>",
+      to: email,
+      subject: "Email Verification OTP for Nebula",
+      text: `Your OTP is ${otp}`,
+    });
+
+    res.json({ message: `OTP sent to ${email}`, success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error sending OTP", error: error.message });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  try {
+    const { otp, email } = req.body;
+    console.log(otp, email);
+
+    const verifiedOTP = await EmailVerification.findOne({ otp, email });
+    if (!verifiedOTP) return res.status(400).json({ msg: "Invalid OTP" });
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { isVerified: true },
+      { new: true }
+    );
+
+    console.log("updatedUser", updatedUser);
+
+    res.json({
+      message: "User verified successfully!",
+      success: true,
+      updatedUser,
+    });
+  } catch (err) {
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 };
@@ -114,4 +154,6 @@ module.exports = {
   register,
   me,
   userUpdate,
+  sendOTP,
+  verifyOtp,
 };
