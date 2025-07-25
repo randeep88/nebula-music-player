@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/user.model.js");
-const EmailVerification = require("../models/EmailVerification.model.js");
+const EmailVerification = require("../models/emailVerification.model.js");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
